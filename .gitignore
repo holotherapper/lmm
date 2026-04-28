@@ -1,0 +1,6 @@
+/target
+.claude/
+.env
+.DS_Store
+*.log
+tarpaulin-report.html

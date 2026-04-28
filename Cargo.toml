@@ -1,0 +1,42 @@
+[package]
+name = "lmm"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.86"
+description = "Local AI model manager for Apple Silicon"
+license = "Apache-2.0"
+repository = "https://github.com/holotherapper/lmm"
+readme = "README.md"
+keywords = ["ai", "model-manager", "huggingface", "mlx", "apple-silicon"]
+categories = ["command-line-utilities"]
+
+[[bin]]
+name = "lmm"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5.54", features = ["derive", "env"] }
+clap_complete = "4.5.61"
+cliclack = "0.3"
+directories = "6.0.0"
+pathdiff = "0.2.3"
+reqwest = { version = "0.12.24", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+sha1 = "0.10.6"
+sha2 = "0.10.9"
+thiserror = "2.0.17"
+
+[lints.rust]
+unsafe_code = "deny"
+future_incompatible = { level = "warn", priority = -1 }
+nonstandard_style = "deny"
+
+[lints.clippy]
+all = "deny"
+redundant_clone = "deny"
+needless_collect = "deny"
+large_enum_variant = "deny"
+
+[dev-dependencies]
+tempfile = "3.23.0"
