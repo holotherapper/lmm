@@ -1,0 +1,102 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  ci:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: dtolnay/rust-toolchain@a54c7afa936fefeb4456b2dd8068152669aa8203 # master
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2.7.8
+
+      - name: Format
+        run: cargo fmt --check
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+      - name: Test
+        run: cargo test
+      - name: Build
+        run: cargo build --release
+
+  release:
+    needs: ci
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify Cargo.toml version matches tag
+        run: |
+          cargo_version=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')
+          if [ "$cargo_version" != "${{ steps.version.outputs.version }}" ]; then
+            echo "::error::Cargo.toml version ($cargo_version) does not match tag (${{ steps.version.outputs.version }})"
+            exit 1
+          fi
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          # Extract the section between this version header and the next version header
+          changelog=$(awk "/^## \[${version}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md)
+          # Write to file for gh release
+          echo "$changelog" > /tmp/release_notes.md
+          echo "notes_file=/tmp/release_notes.md" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists, skipping creation"
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "$GITHUB_REF_NAME" \
+              --notes-file "${{ steps.changelog.outputs.notes_file }}"
+          fi
+
+      - name: Compute tarball SHA256
+        id: sha
+        run: |
+          curl -sL "https://github.com/${{ github.repository }}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz" -o /tmp/source.tar.gz
+          sha=$(shasum -a 256 /tmp/source.tar.gz | awk '{print $1}')
+          echo "sha256=$sha" >> "$GITHUB_OUTPUT"
+
+      - name: Update Homebrew formula
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          sha="${{ steps.sha.outputs.sha256 }}"
+          repo="holotherapper/homebrew-tap"
+          file="Formula/lmm.rb"
+
+          # Get current formula
+          current_sha=$(gh api "repos/${repo}/contents/${file}" -q .sha)
+          content=$(gh api "repos/${repo}/contents/${file}" -q .content | base64 -d)
+
+          # Update version and sha256
+          updated=$(echo "$content" \
+            | sed "s|archive/refs/tags/v[0-9.]*\.tar\.gz|archive/refs/tags/v${version}.tar.gz|" \
+            | sed "s|sha256 \"[a-f0-9]*\"|sha256 \"${sha}\"|")
+
+          gh api "repos/${repo}/contents/${file}" -X PUT \
+            -f message="🔖 lmm ${version}" \
+            -f content="$(echo "$updated" | base64)" \
+            -f sha="$current_sha" \
+            -q .content.html_url

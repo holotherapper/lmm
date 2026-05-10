@@ -48,10 +48,12 @@ cargo install --path .
 lmm search                                          # interactive search → select → install
 lmm add mlx-community/Qwen3-8B-4bit                 # install from Hugging Face
 lmm add mlx-community/Qwen3-8B-4bit --tool lmstudio # install + expose to LM Studio
-lmm list                                             # see all local models
+lmm list                                             # see all local models (with repo column)
 lmm adopt                                           # track existing HF Cache models
 lmm doctor                                          # validate + consolidate external models
 lmm remove qwen3-8b-4bit-mlx                        # remove and reclaim disk space
+lmm remove mlx-community/Qwen3-8B-4bit              # remove by repo name
+lmm remove gemma-3-1b-it-qat-4bit                   # remove external models directly
 ```
 
 ## Commands
@@ -59,14 +61,14 @@ lmm remove qwen3-8b-4bit-mlx                        # remove and reclaim disk sp
 | Command | Description |
 |---------|-------------|
 | `lmm add <repo>` | Install a model and expose to tools. Aliases: `a`, `i`, `install` |
-| `lmm remove [names]` | Remove exposures and reclaim cache. Alias: `rm` |
-| `lmm list` | List all local models. Alias: `ls` |
-| `lmm info <name>` | Show details for one model |
+| `lmm remove [names]` | Remove tracked, external, or untracked models. Alias: `rm` |
+| `lmm list` | List all local models with repo source. Alias: `ls` |
+| `lmm info <name>` | Show details for matching models (accepts `org/repo`) |
 | `lmm search [query]` | Search Hugging Face. Aliases: `find`, `discover` |
 | `lmm adopt [names]` | Track unmanaged HF Cache models |
 | `lmm update [names]` | Update models to latest revision. Alias: `upgrade` |
 | `lmm doctor` | Validate cache, exposures, and external models |
-| `lmm gc` | Clean temp files, stale entries, orphan blobs |
+| `lmm gc` | Clean temp files, stale entries, orphan blobs (`--dry-run` for preview) |
 | `lmm config get/set/path` | Read or update configuration |
 | `lmm completions <shell>` | Generate shell completions |
 
@@ -86,10 +88,15 @@ Run `lmm <command> --help` for full options.
 
 ### Deletion rules for `remove`
 
-| Ownership | Default | With `--purge-cache` |
-|-----------|---------|---------------------|
-| Managed | Deletes exposure + HF Cache blobs | — |
-| Adopted | Deletes exposure only | Also deletes HF Cache blobs |
+Names can be aliases (`qwen3-8b-4bit-mlx`) or repo identifiers (`mlx-community/Qwen3-8B-4bit`).
+
+| Target | Behavior |
+|--------|----------|
+| Tracked (managed) | Deletes exposure + HF Cache blobs |
+| Tracked (adopted) | Deletes exposure only (add `--purge-cache` for HF Cache blobs) |
+| External (lmstudio, jan, …) | Deletes files from the tool directory |
+| External (ollama) | Delegates to `ollama rm` |
+| Untracked HF Cache | Deletes the repo cache directory (specify by `org/repo`) |
 
 ## Tool Adapters
 
@@ -119,7 +126,7 @@ mlx-lm, transformers, mflux, Diffusers, mlx-whisper, faster-whisper, Kokoro, Bar
 
 | Tool | Reason |
 |------|--------|
-| Ollama | Copies to blob store, doubling disk usage. Shown in `lmm list` for visibility |
+| Ollama | Copies to blob store, doubling disk usage. Shown in `lmm list`; removable via `lmm remove` (delegates to `ollama rm`) |
 | Draw Things | App Sandbox + proprietary format. Not manageable |
 
 ## Configuration

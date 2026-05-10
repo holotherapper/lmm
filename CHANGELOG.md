@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2026-05-11
+
+### Added
+- Automated release workflow: tag push triggers CI, GitHub Release, and Homebrew formula update (idempotent on re-run)
+- Homebrew formula warns when a stale `~/.cargo/bin/lmm` or `~/.local/bin/lmm` shadows the brew install
+
 ## [0.2.0] - 2026-05-11
 
 ### Added
