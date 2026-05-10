@@ -89,6 +89,7 @@ pub fn list(paths: &AppPaths, input: &ListInput) -> Result<()> {
     } else {
         let mut table = Table::new(&[
             ("NAME", Align::Left),
+            ("REPO", Align::Left),
             ("FORMAT", Align::Left),
             ("SIZE", Align::Right),
             ("TOOLS", Align::Left),
@@ -97,6 +98,7 @@ pub fn list(paths: &AppPaths, input: &ListInput) -> Result<()> {
         for row in &rows {
             table.row(&[
                 &row.name,
+                &row.repo,
                 &row.format,
                 &format::bytes(row.size_bytes),
                 &row.where_,
@@ -133,21 +135,44 @@ pub fn info(paths: &AppPaths, name: &str, json: bool, files: bool) -> Result<()>
     let config = Config::load(&paths.config_path)?;
     let hf_cache = configured_hf_cache_dir(&config);
     let lock = LockFile::load(&paths.lock_path)?;
-    let Some((_id, model)) = lock
+    let matches: Vec<_> = lock
         .models
         .iter()
-        .find(|(_, model)| model.name.eq_ignore_ascii_case(name))
-    else {
+        .filter(|(_, model)| {
+            model.name.eq_ignore_ascii_case(name) || model.source.repo.eq_ignore_ascii_case(name)
+        })
+        .collect();
+
+    if matches.is_empty() {
         return Err(AppError::InvalidInput(format!("model not found: {name}")));
-    };
+    }
 
     if json {
-        let encoded = serde_json::to_string_pretty(model)
-            .map_err(|source| AppError::EncodeJson { source })?;
-        println!("{encoded}");
+        if matches.len() == 1 {
+            let encoded = serde_json::to_string_pretty(matches[0].1)
+                .map_err(|source| AppError::EncodeJson { source })?;
+            println!("{encoded}");
+        } else {
+            let models: Vec<_> = matches.iter().map(|(_, m)| m).collect();
+            let encoded = serde_json::to_string_pretty(&models)
+                .map_err(|source| AppError::EncodeJson { source })?;
+            println!("{encoded}");
+        }
         return Ok(());
     }
 
+    let client = HfClient::new(config.network.hf_endpoint, hf_cache);
+    for (i, (_id, model)) in matches.iter().enumerate() {
+        if i > 0 {
+            eprintln!();
+        }
+        print_model_detail(model, &client, files)?;
+    }
+
+    Ok(())
+}
+
+fn print_model_detail(model: &ModelEntry, client: &HfClient, files: bool) -> Result<()> {
     let hf_url = format!("https://huggingface.co/{}", model.source.repo);
     format::heading(&model.name);
     format::kv(
@@ -163,8 +188,6 @@ pub fn info(paths: &AppPaths, name: &str, json: bool, files: bool) -> Result<()>
     format::kv("status", &model_status_styled(model_status(model)?));
     format::kv("commit", &model.source.commit);
 
-    // Fetch HF metadata for richer display
-    let client = HfClient::new(config.network.hf_endpoint, hf_cache);
     if let Ok(hf_models) = client.search_models(&model.source.repo, None, 1, "downloads")
         && let Some(hf) = hf_models.first()
     {
