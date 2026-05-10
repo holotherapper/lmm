@@ -171,6 +171,8 @@ struct GcArgs {
     include_adopted: bool,
     #[arg(short = 'y', long, help = "Execute the cleanup (default: dry-run)")]
     yes: bool,
+    #[arg(long, help = "Print the cleanup plan without executing (default behavior)")]
+    dry_run: bool,
 }
 
 #[derive(Debug, Args)]
@@ -307,7 +309,7 @@ pub fn run() -> Result<()> {
         ),
         Command::Info(args) => commands::info(&paths, &args.name, args.json, args.files),
         Command::Doctor(args) => commands::doctor(&paths, args.fix, args.deep),
-        Command::Gc(args) => commands::gc(&paths, args.yes, args.include_adopted),
+        Command::Gc(args) => commands::gc(&paths, args.yes && !args.dry_run, args.include_adopted),
         Command::Search(args) => commands::search(
             &paths,
             &SearchInput {
