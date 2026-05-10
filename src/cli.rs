@@ -171,7 +171,10 @@ struct GcArgs {
     include_adopted: bool,
     #[arg(short = 'y', long, help = "Execute the cleanup (default: dry-run)")]
     yes: bool,
-    #[arg(long, help = "Print the cleanup plan without executing (default behavior)")]
+    #[arg(
+        long,
+        help = "Print the cleanup plan without executing (default behavior)"
+    )]
     dry_run: bool,
 }
 

@@ -162,7 +162,11 @@ fn remove_targets(
     input: &RemoveInput,
 ) -> Result<(Vec<String>, Vec<UntrackedTarget>, Vec<ExternalTarget>)> {
     if input.all {
-        return Ok((lock.models.keys().cloned().collect(), Vec::new(), Vec::new()));
+        return Ok((
+            lock.models.keys().cloned().collect(),
+            Vec::new(),
+            Vec::new(),
+        ));
     }
     if input.names.is_empty() {
         if tui::can_run() {
@@ -230,10 +234,8 @@ fn select_remove_targets(
     input: &RemoveInput,
 ) -> Result<(Vec<String>, Vec<UntrackedTarget>, Vec<ExternalTarget>)> {
     let externals = discover_external_exposures(config, lock)?;
-    let hf_entries = super::scan::hf_cache_entries(
-        &super::scan::hf_cache_repo_dirs(hf_cache)?,
-        lock,
-    );
+    let hf_entries =
+        super::scan::hf_cache_entries(&super::scan::hf_cache_repo_dirs(hf_cache)?, lock);
 
     let mut items: Vec<(String, String, String)> = lock
         .models
