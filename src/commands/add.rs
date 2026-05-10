@@ -554,7 +554,7 @@ fn available_artifacts(
             alias: default_alias(repo, FormatKind::Mlx, None),
             size_bytes,
             file_count: runtime_files.len(),
-            detail: "Apple Silicon MLX snapshot".to_string(),
+            detail: "MLX snapshot".to_string(),
         });
     }
 

@@ -2,9 +2,10 @@
 
 [![CI](https://github.com/holotherapper/lmm/actions/workflows/ci.yml/badge.svg)](https://github.com/holotherapper/lmm/actions)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Rust](https://img.shields.io/badge/rust-1.86%2B-orange.svg)](https://www.rust-lang.org)
+[![Rust](https://img.shields.io/badge/rust-1.87%2B-orange.svg)](https://www.rust-lang.org)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)]()
 
-Local AI model manager for Apple Silicon.
+Local AI model manager for macOS and Linux.
 
 **Download once. Use everywhere. Remove cleanly.**
 
@@ -29,14 +30,14 @@ Local AI tools (LM Studio, Ollama, llama.cpp, ComfyUI, …) each maintain their 
 
 ## Install
 
-Requires macOS (Apple Silicon).
+**macOS:**
 
 ```sh
 brew tap holotherapper/tap
 brew install lmm
 ```
 
-Or build from source (requires Rust 1.86+):
+**From source (macOS / Linux, requires Rust 1.87+):**
 
 ```sh
 cargo install --path .
@@ -131,7 +132,7 @@ mlx-lm, transformers, mflux, Diffusers, mlx-whisper, faster-whisper, Kokoro, Bar
 
 ## Configuration
 
-Config file: `~/Library/Application Support/dev.local.lmm/config.json` (override with `LMM_STATE_DIR`).
+Config file: `~/Library/Application Support/dev.local.lmm/config.json` (macOS) or `~/.local/share/lmm/config.json` (Linux). Override with `LMM_STATE_DIR`.
 
 ```sh
 lmm config set paths.comfyui /path/to/ComfyUI/models

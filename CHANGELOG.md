@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.2] - 2026-05-11
+
+### Added
+- Linux support: default tool paths for Jan and GPT4All on Linux, CI runs on both macOS and Ubuntu
+
 ## [0.2.1] - 2026-05-11
 
 ### Added

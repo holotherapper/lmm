@@ -32,7 +32,7 @@ Please open an issue with:
 - Steps to reproduce
 - Expected vs actual behavior
 - `lmm --version` output
-- macOS version and chip (e.g. M5 Max)
+- OS and architecture (e.g. macOS M5 Max, Ubuntu 24.04 x86_64)
 
 ## License
 

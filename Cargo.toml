@@ -1,13 +1,13 @@
 [package]
 name = "lmm"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2024"
-rust-version = "1.86"
-description = "Local AI model manager for Apple Silicon"
+rust-version = "1.87"
+description = "Local AI model manager"
 license = "Apache-2.0"
 repository = "https://github.com/holotherapper/lmm"
 readme = "README.md"
-keywords = ["ai", "model-manager", "huggingface", "mlx", "apple-silicon"]
+keywords = ["ai", "model-manager", "huggingface", "mlx", "local-llm"]
 categories = ["command-line-utilities"]
 
 [[bin]]

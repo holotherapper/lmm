@@ -70,13 +70,13 @@ impl Default for Config {
                 hf_cache: None,
                 lmstudio: Some("~/.lmstudio/models".to_string()),
                 ollama: Some("~/.ollama/models".to_string()),
-                jan: Some("~/Library/Application Support/Jan/data/llamacpp/models".to_string()),
+                jan: Some(default_jan_path()),
                 comfyui: None,
                 a1111: None,
                 invokeai: None,
                 fooocus: None,
                 text_gen_webui: None,
-                gpt4all: Some("~/Library/Application Support/nomic.ai/GPT4All".to_string()),
+                gpt4all: Some(default_gpt4all_path()),
             },
             defaults: DefaultsConfig {
                 exposure_strategy: "auto".to_string(),
@@ -99,6 +99,22 @@ impl Default for Config {
                 confirm_destructive: true,
             },
         }
+    }
+}
+
+fn default_jan_path() -> String {
+    if cfg!(target_os = "macos") {
+        "~/Library/Application Support/Jan/data/llamacpp/models".to_string()
+    } else {
+        "~/.config/Jan/data/models".to_string()
+    }
+}
+
+fn default_gpt4all_path() -> String {
+    if cfg!(target_os = "macos") {
+        "~/Library/Application Support/nomic.ai/GPT4All".to_string()
+    } else {
+        "~/.local/share/nomic.ai/GPT4All".to_string()
     }
 }
 

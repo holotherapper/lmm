@@ -74,7 +74,7 @@ pub(crate) fn format_choice_items(files: &[CandidateFile]) -> Vec<(String, Strin
         items.push((
             "mlx".to_string(),
             "MLX".to_string(),
-            "Apple Silicon MLX snapshot".to_string(),
+            "MLX snapshot".to_string(),
         ));
     }
     items

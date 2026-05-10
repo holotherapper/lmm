@@ -120,5 +120,5 @@ webui_adapter!(
     "GPT4All",
     &[FormatKind::Gguf],
     gpt4all,
-    "paths.gpt4all ~/Library/Application\\ Support/nomic.ai/GPT4All"
+    "paths.gpt4all <path-to-GPT4All>"
 );

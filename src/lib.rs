@@ -1,4 +1,4 @@
-//! lmm — Local LLM model manager for Apple Silicon workflows.
+//! lmm — Local AI model manager.
 //!
 //! Treats HF Cache as the canonical model store, then exposes artifacts
 //! to local tools (LM Studio, mlx-lm, llama.cpp, Ollama, etc.) via

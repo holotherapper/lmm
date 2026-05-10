@@ -136,7 +136,7 @@ pub fn logo() {
 pub fn banner() {
     logo();
     eprintln!();
-    eprintln!("  {}", dim("Local AI model manager for Apple Silicon"));
+    eprintln!("  {}", dim("Local AI model manager"));
     eprintln!();
     eprintln!(
         "  {} {}  {}",
