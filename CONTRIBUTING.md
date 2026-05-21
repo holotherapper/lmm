@@ -36,4 +36,6 @@ Please open an issue with:
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the Apache License 2.0.
+By contributing, you agree that your contributions will be dual-licensed
+under the MIT License and the Apache License 2.0, at the user's option,
+matching the project's license.

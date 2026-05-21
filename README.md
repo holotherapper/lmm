@@ -1,7 +1,7 @@
 # lmm
 
 [![CI](https://github.com/holotherapper/lmm/actions/workflows/ci.yml/badge.svg)](https://github.com/holotherapper/lmm/actions)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 [![Rust](https://img.shields.io/badge/rust-1.87%2B-orange.svg)](https://www.rust-lang.org)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)]()
 
@@ -161,4 +161,9 @@ Run `lmm config set` to see available keys.
 
 ## License
 
-[Apache License 2.0](LICENSE)
+Dual-licensed under either of:
+
+- [MIT license](LICENSE-MIT)
+- [Apache License 2.0](LICENSE-APACHE)
+
+at your option. SPDX identifier: `MIT OR Apache-2.0`.
