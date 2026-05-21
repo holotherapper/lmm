@@ -33,14 +33,13 @@ Local AI tools (LM Studio, Ollama, llama.cpp, ComfyUI, …) each maintain their 
 **macOS:**
 
 ```sh
-brew tap holotherapper/tap
-brew install lmm
+brew install holotherapper/tap/lmm
 ```
 
 **From source (macOS / Linux, requires Rust 1.87+):**
 
 ```sh
-cargo install --path .
+cargo install --git https://github.com/holotherapper/lmm
 ```
 
 ## Quick Start
